@@ -5,10 +5,10 @@ const ACTIONS = {
   MAKE_REQUEST: "make-request",
   GET_DATA: "get_data",
   ERROR: "error",
+  UPDATE_HAS_NEXT_PAGE: "update-has-next-page",
 };
 
-const JOBS_URL =
-  "https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json";
+const JOBS_URL = "/positions.json";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -23,6 +23,12 @@ function reducer(state, action) {
         jobs: [],
         error: action.payload.error,
       };
+    case ACTIONS.UPDATE_HAS_NEXT_PAGE:
+      return {
+        ...state,
+        hasNextPage: action.payload.hasNextPage,
+      };
+
     default:
       return state;
   }
@@ -45,11 +51,11 @@ export default function useFetchJobs(params, page) {
   useEffect(() => {
     //   cancel multiple requests by typing
     // A good nifty example is when you have a search component, and imagine on every keyboard strike into the input tag, an axios request is made, which can lead to an overload of requests. The cancel token idea can help cancel the previous request, made by previous keyboard hit.
-    const cancelToken = axios.CancelToken.source();
+    const cancelToken1 = axios.CancelToken.source();
     dispatch({ type: ACTIONS.MAKE_REQUEST });
     axios
       .get(JOBS_URL, {
-        CancelToken: cancelToken.token,
+        CancelToken: cancelToken1.token,
         params: { markdown: true, page: page, ...params },
       })
       .then((res) => {
@@ -59,8 +65,30 @@ export default function useFetchJobs(params, page) {
         if (axios.isCancel(e)) return;
         dispatch({ type: ACTIONS.ERROR, payload: { error: e } });
       });
+
+    // axios request for a next page update
+    const cancelToken2 = axios.CancelToken.source();
+
+    axios
+      .get(JOBS_URL, {
+        CancelToken: cancelToken2.token,
+        params: { markdown: true, page: page + 1, ...params },
+      })
+      .then((res) => {
+        dispatch({
+          type: ACTIONS.UPDATE_HAS_NEXT_PAGE,
+          payload: { hasNextPage: res.data.length !== 0 },
+        });
+      })
+      .catch((e) => {
+        if (axios.isCancel(e)) return;
+        dispatch({ type: ACTIONS.ERROR, payload: { error: e } });
+      });
+
     return () => {
-      cancelToken.cancel();
+      // individualy cancel each request
+      cancelToken1.cancel();
+      cancelToken2.cancel();
     };
   }, [params, page]);
 
