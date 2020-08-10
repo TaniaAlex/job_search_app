@@ -13,10 +13,10 @@ function App() {
 
   function handleParamChange(e) {
     const param = e.target.name;
-    const val = e.target.val;
+    const value = e.target.value;
     setPage(1);
     setParams((prevParams) => {
-      return { ...prevParams, [param]: val };
+      return { ...prevParams, [param]: value };
     });
   }
 
