@@ -6,6 +6,10 @@
 
 npm i react-bootstrap axios
 
+- Renders Markdown as pure React components
+
+npm i react-markdown
+
 ### Used
 
 useReducer
