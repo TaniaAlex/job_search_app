@@ -1,5 +1,3 @@
-### Advanced FB Dropdown Menu
-
 ### GitHub Jobs API - Search App
 
 ### Dependencies
@@ -12,8 +10,8 @@ npm i react-markdown
 
 ### Used
 
-useReducer
-useEffect
+useReducer,
+useEffect,
 axios.CancelToken.source()
 
 ### Fix CORS issue
