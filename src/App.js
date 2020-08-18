@@ -22,7 +22,7 @@ function App() {
 
   return (
     <Container className="my-4">
-      <h1 className="mb-4">Job Search</h1>
+      <h1 className="mb-4">Github Job Search</h1>
       <SearchJobForm params={params} onParamChange={handleParamChange} />
       <JobsPage page={page} setPage={setPage} hasNextPage={hasNextPage} />
       {loading && <h1>Loading...</h1>}
